@@ -1,0 +1,41 @@
+[{
+  "id": 1,
+  "category": "Booby, masked",
+  "amount": "$968.53"
+}, {
+  "id": 2,
+  "category": "Mallard",
+  "amount": "$12.02"
+}, {
+  "id": 3,
+  "category": "Turkey vulture",
+  "amount": "$864.22"
+}, {
+  "id": 4,
+  "category": "Green heron",
+  "amount": "$97.24"
+}, {
+  "id": 5,
+  "category": "Fox, pampa gray",
+  "amount": "$836.20"
+}, {
+  "id": 6,
+  "category": "Striped hyena",
+  "amount": "$53.11"
+}, {
+  "id": 7,
+  "category": "Ground monitor (unidentified)",
+  "amount": "$130.58"
+}, {
+  "id": 8,
+  "category": "Greater rhea",
+  "amount": "$284.56"
+}, {
+  "id": 9,
+  "category": "Margay",
+  "amount": "$467.10"
+}, {
+  "id": 10,
+  "category": "Red-winged blackbird",
+  "amount": "$330.73"
+}]
