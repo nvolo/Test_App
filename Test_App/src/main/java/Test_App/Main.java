@@ -1,10 +1,12 @@
-package sample;
+package Test_App;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+
+import java.io.Console;
 
 public class Main extends Application {
 
@@ -20,8 +22,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+//
+//        Storage storage = new Storage();
+//        storage.read();
+//
+//        System.out.println(storage.getLoadedTransactions());
         Stage = primaryStage;
-        Parent root = FXMLLoader.load(getClass().getResource("sample.fxml"));
+        Parent root = FXMLLoader.load(Main.class.getResource("sample.fxml"));
         primaryStage.setTitle("Accounting");
         primaryStage.setScene(new Scene(root, 443, 535));
         primaryStage.show();
