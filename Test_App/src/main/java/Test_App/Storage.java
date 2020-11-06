@@ -1,15 +1,13 @@
 package Test_App;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +30,10 @@ public class Storage {
     }
 
     public void saveFile() throws IOException {
-        Gson gson = new Gson();
-        gson.toJson(Storage, new FileWriter(FILE_NAME));
+        try (Writer writer = new FileWriter(FILE_NAME)) {
+            Gson gson = new GsonBuilder().create();
+            gson.toJson(Storage, writer);
+        }
     }
 
     public void read() throws FileNotFoundException {
@@ -41,15 +41,4 @@ public class Storage {
         JsonReader reader = new JsonReader(new FileReader(FILE_NAME));
         Storage = gson.fromJson(reader, TRANSACTION_TYPE);
     }
-
-    public void write(Transaction transaction) {
-
-    }
-
-
-    public void update() {
-
-    }
-
-
 }

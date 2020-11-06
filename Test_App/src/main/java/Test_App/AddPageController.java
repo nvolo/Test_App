@@ -94,8 +94,22 @@ public class AddPageController {
 
         Transaction transaction = new Transaction(1,Category, amount);
         Storage storage = new Storage();
+        storage.read();
         storage.addTransaction(transaction);
         storage.saveFile();
+        resetValues();
+    }
+
+    private void resetValues(){
+        inputTextfield.clear();
+        expenseRadioButton.setSelected(false);
+        incomeRadioButton.setSelected(false);
+        salaryRadioButton.setSelected(false);
+        presentsRadioButton.setSelected(false);
+        transportRadioButton.setSelected(false);
+        personalSpendingRadioButton.setSelected(false);
+        foodRadioButton.setSelected(false);
+
     }
 
 

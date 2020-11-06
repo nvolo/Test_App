@@ -1,31 +1,38 @@
 package Test_App;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import com.sun.javafx.geom.BaseBounds;
-import com.sun.javafx.geom.transform.BaseTransform;
-import com.sun.javafx.jmx.MXNodeAlgorithm;
-import com.sun.javafx.jmx.MXNodeAlgorithmContext;
-import com.sun.javafx.sg.prism.NGNode;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
+import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 
 import javafx.event.ActionEvent;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
-import static com.sun.org.apache.xalan.internal.xsltc.compiler.util.Type.Node;
 
-
-public class Controller {
+public class Controller implements Initializable {
 
     public static Scene mainScreen;
+
+    @FXML
+    public TableView<Transaction> tableView;
+    @FXML
+    public TableColumn<Transaction, String> categoryColumn;
+    @FXML
+    public TableColumn<Transaction, String> amountColumn;
 
     @FXML
     private ResourceBundle resources;
@@ -49,12 +56,8 @@ public class Controller {
     private Label sumLabel;
 
     @FXML
-    void initialize(ActionEvent event) throws IOException {
-    }
-
-    @FXML
     public void triggerButton(ActionEvent event) throws IOException {
-        Parent add_page = FXMLLoader.load((getClass().getResource("addPage.fxml")));
+        Parent add_page = FXMLLoader.load((getClass().getResource("/addPage.fxml")));
         Scene add_page_scene = new Scene(add_page);
         Stage app_stage = Main.getPrimaryStage();
         mainScreen = app_stage.getScene();
@@ -62,4 +65,27 @@ public class Controller {
         app_stage.show();
     }
 
+    private ObservableList<Transaction> data;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources)  {
+        Storage storage = new Storage();
+        try {
+            storage.read();
+        }
+        catch (FileNotFoundException e){
+
+        }
+        data = FXCollections.observableArrayList();
+        data.addAll(storage.getLoadedTransactions());
+        for (Transaction transaction: data){
+            amountColumn.setCellValueFactory(param
+                    -> new SimpleStringProperty(
+                            transaction.amount));
+            categoryColumn.setCellValueFactory(param
+                    -> new SimpleStringProperty(
+                            transaction.category));
+        }
+        tableView.getItems().addAll(data);
+    }
 }

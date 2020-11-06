@@ -2,12 +2,8 @@ package Test_App;
 
 public class Transaction {
     private int id;
-    private String category;
-    private String amount;
-
-    public Transaction () {
-
-    }
+    public String category;
+    public String amount;
 
     public Transaction(int id, String category, String amount){
         this.id = id;
