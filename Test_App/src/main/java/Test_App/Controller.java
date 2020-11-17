@@ -72,19 +72,15 @@ public class Controller implements Initializable {
         Storage storage = Storage.getStorage();
         try {
             storage.read();
-        } catch (FileNotFoundException e) {
-
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        data = FXCollections.observableArrayList();
+        ObservableList<Transaction> data = FXCollections.observableArrayList();
         data.addAll(storage.getLoadedTransactions());
-        for (Transaction transaction : data) {
-            amountColumn.setCellValueFactory(param
-                    -> new SimpleStringProperty(
-                    transaction.amount));
-            categoryColumn.setCellValueFactory(param
-                    -> new SimpleStringProperty(
-                    transaction.category));
-        }
-        tableView.getItems().addAll(data);
+
+        categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
+        amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+
+        tableView.setItems(data);
     }
 }

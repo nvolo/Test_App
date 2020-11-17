@@ -35,10 +35,14 @@ public final class Storage {
         }
     }
 
-    public void read() throws FileNotFoundException {
+    public void read() throws IOException {
+        File storageFile = new File(FILE_NAME);
+        if(!storageFile.exists() && !storageFile.createNewFile()){
+            //
+        }
         Gson gson = new Gson();
         JsonReader reader = new JsonReader(new FileReader(FILE_NAME));
-        Storage = gson.fromJson(reader, TRANSACTION_TYPE);
+        Storage = gson.fromJson(reader, new TypeToken<List<Transaction>>() {}.getType());
     }
 
     public static Storage getStorage() {
