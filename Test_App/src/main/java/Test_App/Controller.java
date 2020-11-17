@@ -68,23 +68,22 @@ public class Controller implements Initializable {
     private ObservableList<Transaction> data;
 
     @Override
-    public void initialize(URL location, ResourceBundle resources)  {
-        Storage storage = new Storage();
+    public void initialize(URL location, ResourceBundle resources) {
+        Storage storage = Storage.getStorage();
         try {
             storage.read();
-        }
-        catch (FileNotFoundException e){
+        } catch (FileNotFoundException e) {
 
         }
         data = FXCollections.observableArrayList();
         data.addAll(storage.getLoadedTransactions());
-        for (Transaction transaction: data){
+        for (Transaction transaction : data) {
             amountColumn.setCellValueFactory(param
                     -> new SimpleStringProperty(
-                            transaction.amount));
+                    transaction.amount));
             categoryColumn.setCellValueFactory(param
                     -> new SimpleStringProperty(
-                            transaction.category));
+                    transaction.category));
         }
         tableView.getItems().addAll(data);
     }

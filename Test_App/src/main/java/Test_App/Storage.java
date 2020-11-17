@@ -4,23 +4,22 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
-import org.json.JSONObject;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Storage {
+public final class Storage {
 
-    private List<Transaction> Storage = new ArrayList<Transaction>();
+    private static List<Transaction> Storage;
+    private static Storage storageClass;
 
     public List<Transaction> getLoadedTransactions(){
         return Storage;
     }
 
-    private static final String FILE_NAME = "C:\\Test_App\\Test_App\\src\\main\\java\\Test_App\\Transaction.json";
+    private static final String FILE_NAME = "Storage.json";
 
     private static final Type TRANSACTION_TYPE = new TypeToken<List<Transaction>>() {
     }.getType();
@@ -40,5 +39,13 @@ public class Storage {
         Gson gson = new Gson();
         JsonReader reader = new JsonReader(new FileReader(FILE_NAME));
         Storage = gson.fromJson(reader, TRANSACTION_TYPE);
+    }
+
+    public static Storage getStorage() {
+        if (storageClass == null) {
+            storageClass = new Storage();
+            Storage = new ArrayList<Transaction>();
+        }
+        return storageClass;
     }
 }
