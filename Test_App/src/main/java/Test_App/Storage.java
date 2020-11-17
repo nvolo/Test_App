@@ -5,51 +5,76 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
-import java.io.*;
-import java.lang.reflect.Type;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class Storage {
 
-    private static List<Transaction> Storage;
-    private static Storage storageClass;
+    private static Storage instance;
 
-    public List<Transaction> getLoadedTransactions(){
-        return Storage;
+    private List<Transaction> storage;
+
+    private Storage() {
+        storage = new ArrayList<>();
+        read();
+    }
+
+    public static Storage getInstance() {
+        if (instance == null) {
+            instance = new Storage();
+        }
+        return instance;
+    }
+
+    public List<Transaction> getLoadedTransactions() {
+        return storage;
     }
 
     private static final String FILE_NAME = "Storage.json";
 
-    private static final Type TRANSACTION_TYPE = new TypeToken<List<Transaction>>() {
-    }.getType();
-
-    public void addTransaction(Transaction transaction){
-        Storage.add(transaction);
+    public void addTransaction(Transaction transaction) {
+        storage.add(transaction);
     }
 
     public void saveFile() throws IOException {
         try (Writer writer = new FileWriter(FILE_NAME)) {
             Gson gson = new GsonBuilder().create();
-            gson.toJson(Storage, writer);
+            gson.toJson(storage, writer);
         }
     }
 
-    public void read() throws IOException {
+    public void read() {
         File storageFile = new File(FILE_NAME);
-        if(!storageFile.exists() && !storageFile.createNewFile()){
-            //
+        try {
+            if (!storageFile.exists() && !storageFile.createNewFile()) {
+                //
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         Gson gson = new Gson();
-        JsonReader reader = new JsonReader(new FileReader(FILE_NAME));
-        Storage = gson.fromJson(reader, new TypeToken<List<Transaction>>() {}.getType());
+        JsonReader reader = null;
+        try {
+            reader = new JsonReader(new FileReader(FILE_NAME));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        storage = gson.fromJson(reader, new TypeToken<List<Transaction>>() {
+        }.getType());
+        if (storage == null) {
+            storage = new ArrayList<>();
+        }
     }
 
-    public static Storage getStorage() {
-        if (storageClass == null) {
-            storageClass = new Storage();
-            Storage = new ArrayList<Transaction>();
-        }
-        return storageClass;
+    public int getTotal() {
+        return storage.stream()
+                .mapToInt(Transaction::getAmount)
+                .sum();
     }
 }

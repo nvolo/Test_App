@@ -1,11 +1,11 @@
 package Test_App;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import javafx.beans.property.SimpleStringProperty;
+import Test_App.listeners.DataReloadListener;
+import Test_App.listeners.StorageReloader;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -23,7 +23,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 
-public class Controller implements Initializable {
+public class Controller implements Initializable, DataReloadListener {
 
     public static Scene mainScreen;
 
@@ -65,16 +65,15 @@ public class Controller implements Initializable {
         app_stage.show();
     }
 
-    private ObservableList<Transaction> data;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        Storage storage = Storage.getStorage();
-        try {
-            storage.read();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
+        StorageReloader.registerListener(this);
+
+        Storage storage = Storage.getInstance();
+        storage.read();
+        balanceLabel.setText(String.valueOf(storage.getTotal()));
+
         ObservableList<Transaction> data = FXCollections.observableArrayList();
         data.addAll(storage.getLoadedTransactions());
 
@@ -82,5 +81,15 @@ public class Controller implements Initializable {
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
 
         tableView.setItems(data);
+    }
+
+    @Override
+    public void reloadStorage() {
+        Storage storage = Storage.getInstance();
+        storage.read();
+        ObservableList<Transaction> data = FXCollections.observableArrayList(storage.getLoadedTransactions());
+        tableView.setItems(data);
+
+        balanceLabel.setText(String.valueOf(storage.getTotal()));
     }
 }

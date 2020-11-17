@@ -2,22 +2,15 @@ package Test_App;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Observable;
 import java.util.ResourceBundle;
 
+import Test_App.listeners.StorageReloader;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-
-import javax.print.attribute.standard.Severity;
-import javax.xml.soap.Text;
-import javax.xml.validation.Validator;
 
 import static Test_App.Controller.mainScreen;
 
@@ -80,17 +73,17 @@ public class AddPageController {
         });
 
         expenseRadioButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
-                @Override
-                public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
-                    if (isNowSelected) {
-                        salaryRadioButton.setDisable(true);
-                    } else {
-                        salaryRadioButton.setDisable(false);
-                    }
-                    foodRadioButton.setSelected(false);
-                    personalSpendingRadioButton.setSelected(false);
-                    transportRadioButton.setSelected(false);
+            @Override
+            public void changed(ObservableValue<? extends Boolean> obs, Boolean wasPreviouslySelected, Boolean isNowSelected) {
+                if (isNowSelected) {
+                    salaryRadioButton.setDisable(true);
+                } else {
+                    salaryRadioButton.setDisable(false);
                 }
+                foodRadioButton.setSelected(false);
+                personalSpendingRadioButton.setSelected(false);
+                transportRadioButton.setSelected(false);
+            }
         });
 
         incomeRadioButton.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -108,47 +101,54 @@ public class AddPageController {
                 salaryRadioButton.setSelected(false);
             }
         });
-
-
     }
 
     @FXML
-    public void goBack(ActionEvent event) throws IOException {
+    public void goBack(ActionEvent event) {
         Stage app_stage = Main.getPrimaryStage();
         app_stage.setScene(mainScreen);
         app_stage.show();
     }
 
     public void add(ActionEvent event) throws IOException {
-        boolean isSelected = expenseRadioButton.isSelected();
-        String Category = "";
-        if(salaryRadioButton.isSelected()){
-            Category = salaryRadioButton.getText();
-        }
-        if(foodRadioButton.isSelected()){
-            Category = foodRadioButton.getText();
-        }
-        if(transportRadioButton.isSelected()){
-            Category = transportRadioButton.getText();
-        }
-        if(personalSpendingRadioButton.isSelected()){
-            Category = personalSpendingRadioButton.getText();
-        }
-        if(presentsRadioButton.isSelected()){
-            Category = presentsRadioButton.getText();
+
+        if (!expenseRadioButton.isSelected() && !incomeRadioButton.isSelected()) {
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Please select transaction type.", ButtonType.OK);
+            errorAlert.showAndWait();
+            return;
         }
 
-        String amount = isSelected?"-"+inputTextfield.getText():"+"+inputTextfield.getText();
+        boolean isExpense = expenseRadioButton.isSelected();
+        String category = "";
+        if (salaryRadioButton.isSelected()) {
+            category = salaryRadioButton.getText();
+        }
+        if (foodRadioButton.isSelected()) {
+            category = foodRadioButton.getText();
+        }
+        if (transportRadioButton.isSelected()) {
+            category = transportRadioButton.getText();
+        }
+        if (personalSpendingRadioButton.isSelected()) {
+            category = personalSpendingRadioButton.getText();
+        }
+        if (presentsRadioButton.isSelected()) {
+            category = presentsRadioButton.getText();
+        }
 
-        Transaction transaction = new Transaction(1,Category, amount);
-        Storage storage = Storage.getStorage();
+        int value = isExpense ? -Integer.parseInt(inputTextfield.getText()) : Integer.parseInt(inputTextfield.getText());
+
+        Transaction transaction = new Transaction(1, category, value);
+        Storage storage = Storage.getInstance();
         storage.read();
         storage.addTransaction(transaction);
         storage.saveFile();
         resetValues();
+
+        StorageReloader.reloadStorage();
     }
 
-    private void resetValues(){
+    private void resetValues() {
         inputTextfield.clear();
         expenseRadioButton.setSelected(false);
         incomeRadioButton.setSelected(false);
@@ -157,8 +157,5 @@ public class AddPageController {
         transportRadioButton.setSelected(false);
         personalSpendingRadioButton.setSelected(false);
         foodRadioButton.setSelected(false);
-
     }
-
-
 }
