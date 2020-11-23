@@ -1,13 +1,18 @@
 package Test_App;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
 public class Transaction {
 
-    private int id;
+    public String date;
     public String category;
     public int amount;
 
-    public Transaction(int id, String category, int amount) {
-        this.id = id;
+    public Transaction(String category, int amount) {
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+        this.date = dtf.format(LocalDateTime.now());
         this.category = category;
         this.amount = amount;
     }
@@ -15,6 +20,8 @@ public class Transaction {
     public Transaction getCurrentTransaction() {
         return this;
     }
+
+    public String getDate() {return date; }
 
     public String getCategory() {
         return category;

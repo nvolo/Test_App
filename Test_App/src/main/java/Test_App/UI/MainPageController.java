@@ -1,9 +1,13 @@
-package Test_App;
+package Test_App.UI;
 
 import java.io.IOException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ResourceBundle;
 
+import Test_App.Main;
+import Test_App.Storage;
+import Test_App.Transaction;
 import Test_App.listeners.DataReloadListener;
 import Test_App.listeners.StorageReloader;
 import javafx.collections.FXCollections;
@@ -23,7 +27,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 
-public class Controller implements Initializable, DataReloadListener {
+public class MainPageController implements Initializable, DataReloadListener {
 
     public static Scene mainScreen;
 
@@ -33,6 +37,9 @@ public class Controller implements Initializable, DataReloadListener {
     public TableColumn<Transaction, String> categoryColumn;
     @FXML
     public TableColumn<Transaction, String> amountColumn;
+
+    @FXML
+    public TableColumn<Transaction, String> dateColumn;
 
     @FXML
     private ResourceBundle resources;
@@ -79,6 +86,7 @@ public class Controller implements Initializable, DataReloadListener {
 
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
 
         tableView.setItems(data);
     }

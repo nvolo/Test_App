@@ -8,7 +8,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="443.0" style="-fx-background-color: #7bbcc1;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Test_App.Controller">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="535.0" prefWidth="443.0" style="-fx-background-color: #7bbcc1;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Test_App.UI.MainPageController">
    <children>
       <AnchorPane layoutY="43.0" prefHeight="491.0" prefWidth="443.0" style="-fx-background-color: #ffffff;">
          <children>
@@ -26,10 +26,11 @@
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
-            <TableView fx:id="tableView" id="TableView" layoutX="20.0" layoutY="189.0" prefHeight="256.0" prefWidth="401.0">
+            <TableView id="TableView" fx:id="tableView" layoutX="20.0" layoutY="189.0" prefHeight="256.0" prefWidth="401.0">
               <columns>
-                <TableColumn fx:id="categoryColumn" id="CategoryColumn" prefWidth="200.00002479553223" text="Category" />
-                <TableColumn fx:id="amountColumn" id="AmountColumn" minWidth="0.0" prefWidth="200.66664123535156" text="Amount" />
+                <TableColumn id="CategoryColumn" fx:id="categoryColumn" prefWidth="129.33339881896973" text="Category" />
+                <TableColumn id="AmountColumn" fx:id="amountColumn" minWidth="0.0" prefWidth="133.33338928222656" text="Amount" />
+                <TableColumn id="DateColumn" fx:id="dateColumn" prefWidth="135.333251953125" text="Date" />
               </columns>
             </TableView>
          </children>
