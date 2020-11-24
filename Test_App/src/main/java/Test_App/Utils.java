@@ -5,7 +5,7 @@ import javafx.scene.control.ButtonType;
 
 public class Utils {
 
-    public void showAlert(Alert.AlertType alertType, String message){
+    public static void showAlert(Alert.AlertType alertType, String message){
         Alert errorAlert = new Alert(alertType, message, ButtonType.OK);
         errorAlert.showAndWait();
     }

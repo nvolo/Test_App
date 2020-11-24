@@ -6,7 +6,7 @@ import java.util.Date;
 
 public class Transaction {
 
-    public String date;
+    private String date;
     public String category;
     public int amount;
 
@@ -21,7 +21,9 @@ public class Transaction {
         return this;
     }
 
-    public String getDate() {return date; }
+    public String getDate() {
+        return date;
+    }
 
     public String getCategory() {
         return category;

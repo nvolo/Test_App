@@ -1,4 +1,4 @@
-package Test_App.UI;
+package Test_App.ui;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,7 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import static Test_App.UI.MainPageController.mainScreen;
+import static Test_App.ui.MainPageController.mainScreen;
 
 public class AddPageController {
 
@@ -120,24 +120,22 @@ public class AddPageController {
     public void add(ActionEvent event) throws IOException {
 
         if (!expenseRadioButton.isSelected() && !incomeRadioButton.isSelected()) {
-            new Utils().showAlert(Alert.AlertType.ERROR, "Please select transaction type.");
+            Utils.showAlert(Alert.AlertType.ERROR, "Please select transaction type.");
             return;
         }
 
         if (incomeRadioButton.isSelected()
-                && (!salaryRadioButton.isSelected() && !presentsRadioButton.isSelected())) {
-            new Utils().showAlert(Alert.AlertType.ERROR, "Please select transaction category.");
+                && (!salaryRadioButton.isSelected())) {
+            Utils.showAlert(Alert.AlertType.ERROR, "Please select transaction category.");
             return;
         }
 
         if (expenseRadioButton.isSelected()
                 && (!foodRadioButton.isSelected() && !transportRadioButton.isSelected()
                 && !personalSpendingRadioButton.isSelected())) {
-            new Utils().showAlert(Alert.AlertType.ERROR, "Please select transaction category.");
+            Utils.showAlert(Alert.AlertType.ERROR, "Please select transaction category.");
             return;
         }
-
-
 
         boolean isExpense = expenseRadioButton.isSelected();
         String category = "";
