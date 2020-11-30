@@ -129,7 +129,6 @@ public class AddPageController {
             Utils.showAlert(Alert.AlertType.ERROR, "Please select transaction category.");
             return;
         }
-
         if (expenseRadioButton.isSelected()
                 && (!foodRadioButton.isSelected() && !transportRadioButton.isSelected()
                 && !personalSpendingRadioButton.isSelected())) {

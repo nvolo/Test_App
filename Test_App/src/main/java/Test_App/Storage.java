@@ -11,8 +11,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
 
 public final class Storage {
 
@@ -33,6 +37,8 @@ public final class Storage {
     }
 
     public List<Transaction> getLoadedTransactions() {
+        Collections.sort(storage, new SortByDate());
+        Collections.reverse(storage);
         return storage;
     }
 
