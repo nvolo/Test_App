@@ -1,9 +1,13 @@
-package Test_App;
+package Test_App.ui;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
+import Test_App.Main;
+import Test_App.Storage;
+import Test_App.Transaction;
+import Test_App.Utils;
 import Test_App.listeners.StorageReloader;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -12,7 +16,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
 
-import static Test_App.Controller.mainScreen;
+import static Test_App.ui.MainPageController.mainScreen;
 
 public class AddPageController {
 
@@ -83,6 +87,7 @@ public class AddPageController {
                 foodRadioButton.setSelected(false);
                 personalSpendingRadioButton.setSelected(false);
                 transportRadioButton.setSelected(false);
+                presentsRadioButton.setSelected(false);
             }
         });
 
@@ -93,10 +98,12 @@ public class AddPageController {
                     foodRadioButton.setDisable(true);
                     personalSpendingRadioButton.setDisable(true);
                     transportRadioButton.setDisable(true);
+                    presentsRadioButton.setDisable(true);
                 } else {
                     foodRadioButton.setDisable(false);
                     personalSpendingRadioButton.setDisable(false);
                     transportRadioButton.setDisable(false);
+                    presentsRadioButton.setDisable(false);
                 }
                 salaryRadioButton.setSelected(false);
             }
@@ -113,8 +120,19 @@ public class AddPageController {
     public void add(ActionEvent event) throws IOException {
 
         if (!expenseRadioButton.isSelected() && !incomeRadioButton.isSelected()) {
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Please select transaction type.", ButtonType.OK);
-            errorAlert.showAndWait();
+            Utils.showAlert(Alert.AlertType.ERROR, "Please select transaction type.");
+            return;
+        }
+
+        if (incomeRadioButton.isSelected()
+                && (!salaryRadioButton.isSelected())) {
+            Utils.showAlert(Alert.AlertType.ERROR, "Please select transaction category.");
+            return;
+        }
+        if (expenseRadioButton.isSelected()
+                && (!foodRadioButton.isSelected() && !transportRadioButton.isSelected()
+                && !personalSpendingRadioButton.isSelected())) {
+            Utils.showAlert(Alert.AlertType.ERROR, "Please select transaction category.");
             return;
         }
 
@@ -138,7 +156,7 @@ public class AddPageController {
 
         int value = isExpense ? -Integer.parseInt(inputTextfield.getText()) : Integer.parseInt(inputTextfield.getText());
 
-        Transaction transaction = new Transaction(1, category, value);
+        Transaction transaction = new Transaction(category, value);
         Storage storage = Storage.getInstance();
         storage.read();
         storage.addTransaction(transaction);

@@ -5,14 +5,11 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+
 
 public final class Storage {
 
@@ -22,7 +19,7 @@ public final class Storage {
 
     private Storage() {
         storage = new ArrayList<>();
-        read();
+        createStorageFile();
     }
 
     public static Storage getInstance() {
@@ -33,8 +30,17 @@ public final class Storage {
     }
 
     public List<Transaction> getLoadedTransactions() {
+        Collections.sort(storage, new SortByDate());
+        Collections.reverse(storage);
         return storage;
     }
+
+//    private ClassLoader classLoader = getClass().getClassLoader();
+//
+//    private File resource = new File(classLoader.getResource( "Storage.json").getFile());
+//
+//    private final InputStream inputStream  = Storage.class.getClassLoader().getResourceAsStream("Storage.json");
+//    String FILE_NAME = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
     private static final String FILE_NAME = "Storage.json";
 
@@ -49,21 +55,14 @@ public final class Storage {
         }
     }
 
-    public void read() {
-        File storageFile = new File(FILE_NAME);
-        try {
-            if (!storageFile.exists() && !storageFile.createNewFile()) {
-                //
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void read() throws FileNotFoundException {
         Gson gson = new Gson();
         JsonReader reader = null;
         try {
             reader = new JsonReader(new FileReader(FILE_NAME));
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
         storage = gson.fromJson(reader, new TypeToken<List<Transaction>>() {
         }.getType());
@@ -76,5 +75,21 @@ public final class Storage {
         return storage.stream()
                 .mapToInt(Transaction::getAmount)
                 .sum();
+    }
+
+    public void createStorageFile(){
+        File storageFile = new File(FILE_NAME);
+        try {
+            if (!storageFile.exists() && !storageFile.createNewFile()) {
+                //
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteFile(){
+        File storageFile = new File(FILE_NAME);
+        storageFile.delete();
     }
 }

@@ -29,10 +29,15 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.2'
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+    testImplementation(platform('org.junit:junit-bom:5.7.0'))
+    testImplementation('org.junit.jupiter:junit-jupiter')
 
     // https://mvnrepository.com/artifact/org.json/json
     api group: 'org.json', name: 'json', version: '20200518'
+}
+
+test {
+    useJUnitPlatform()
 }
 
 // Define the main class for the application
