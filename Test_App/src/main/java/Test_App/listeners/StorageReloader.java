@@ -1,5 +1,6 @@
 package Test_App.listeners;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,7 +16,7 @@ public class StorageReloader {
         listeners.remove(listener);
     }
 
-    public static void reloadStorage() {
+    public static void reloadStorage() throws FileNotFoundException {
         for (DataReloadListener listener : listeners) {
             listener.reloadStorage();
         }

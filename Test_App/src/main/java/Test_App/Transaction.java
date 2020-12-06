@@ -1,6 +1,5 @@
 package Test_App;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -10,12 +9,12 @@ import java.util.Date;
 public class Transaction {
 
     private String date;
-    public String category;
-    public int amount;
-    public LocalDateTime recordDate;
+    private String category;
+    private int amount;
+    private LocalDateTime recordDate;
 
     public Transaction(String category, int amount) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm");
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constants.dateFormat);
         this.recordDate = LocalDateTime.now();
         this.date = dtf.format(LocalDateTime.now());
         this.category = category;
@@ -30,7 +29,7 @@ public class Transaction {
         return date;
     }
     public Date getRecordDate() throws ParseException {
-        return new SimpleDateFormat("yyyy/MM/dd HH:mm").parse(this.getDate());
+        return new SimpleDateFormat(Constants.dateFormat).parse(this.getDate());
     }
 
     public String getCategory() {

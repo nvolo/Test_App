@@ -1,5 +1,6 @@
 package Test_App.ui;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -77,7 +78,11 @@ public class MainPageController implements Initializable, DataReloadListener {
         StorageReloader.registerListener(this);
 
         Storage storage = Storage.getInstance();
-        storage.read();
+        try {
+            storage.read();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         balanceLabel.setText(String.valueOf(storage.getTotal()));
 
         ObservableList<Transaction> data = FXCollections.observableArrayList();
@@ -91,7 +96,7 @@ public class MainPageController implements Initializable, DataReloadListener {
     }
 
     @Override
-    public void reloadStorage() {
+    public void reloadStorage() throws FileNotFoundException {
         Storage storage = Storage.getInstance();
         storage.read();
         ObservableList<Transaction> data = FXCollections.observableArrayList(storage.getLoadedTransactions());

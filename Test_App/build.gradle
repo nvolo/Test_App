@@ -36,5 +36,9 @@ dependencies {
     api group: 'org.json', name: 'json', version: '20200518'
 }
 
+test {
+    useJUnitPlatform()
+}
+
 // Define the main class for the application
 mainClassName = 'Test_App.App'
