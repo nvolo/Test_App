@@ -3,43 +3,53 @@
  */
 package Test_App;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public class AppTest {
-    @Test
-    public void getInstanceTest () {
-        Storage storage = Storage.getInstance();
-        assert storage != null;
+
+    Storage storage;
+
+    @BeforeEach
+    public void beforeEach() {
+        storage = Storage.getInstance();
+        storage.createStorageFile();
     }
 
     @Test
-    public void getAddTransaction() {
-        Storage storage = Storage.getInstance();
+    public void testGetInstance () {
+        assertNotNull(storage, "Storage can`t be NULL!");
+    }
+
+    @Test
+    public void testAddTransaction() {
         Transaction transaction = new Transaction("Salary", 200);
         storage.addTransaction(transaction);
-        assert storage.getLoadedTransactions().contains(transaction);
+        assertTrue(storage.getLoadedTransactions().contains(transaction), "Wrong transaction!");
     }
 
     @Test
-    public void getSaveFile() throws IOException {
-        Storage storage = Storage.getInstance();
-        assertDoesNotThrow(() -> storage.saveFile());
+    public void testSaveFile() throws IOException {
+        assertDoesNotThrow(() -> storage.saveFile(), "Can not save file!");
     }
 
     @Test
-    public void getRead() throws FileNotFoundException {
-        Storage storage = Storage.getInstance();
+    public void testRead() throws FileNotFoundException {
         storage.read();
-        assertNotNull(storage.getLoadedTransactions());
+        assertNotNull(storage.getLoadedTransactions(), "Can not read transactions");
     }
 
     @Test
-    public void getReadCatch(){
-        Storage storage = Storage.getInstance();
+    public void testReadCatchCase(){
         storage.deleteFile();
-        assertThrows(FileNotFoundException.class, () -> storage.read());
+        assertThrows(FileNotFoundException.class, () -> storage.read(), "Exception didn`t throw");
+    }
+    @AfterEach
+    public void afterEach() {
+        storage.deleteFile();
     }
 }
