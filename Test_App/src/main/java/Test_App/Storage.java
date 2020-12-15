@@ -88,8 +88,13 @@ public final class Storage {
         }
     }
 
-    public void deleteFile(){
+    public void deleteFile() {
         File storageFile = new File(FILE_NAME);
         storageFile.delete();
+    }
+
+    public boolean ifFileExist() {
+        File storageFile = new File(FILE_NAME);
+        return storageFile.exists();
     }
 }

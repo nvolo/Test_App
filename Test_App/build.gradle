@@ -35,6 +35,8 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.json/json
     api group: 'org.json', name: 'json', version: '20200518'
+
+    testImplementation ('org.awaitility:awaitility:4.0.3')
 }
 
 test {

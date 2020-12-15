@@ -6,9 +6,12 @@ package Test_App;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 public class AppTest {
 
@@ -18,6 +21,11 @@ public class AppTest {
     public void beforeEach() {
         storage = Storage.getInstance();
         storage.createStorageFile();
+    }
+
+    @AfterEach
+    public void afterEach() {
+        storage.deleteFile();
     }
 
     @Test
@@ -38,18 +46,16 @@ public class AppTest {
     }
 
     @Test
-    public void testRead() throws FileNotFoundException {
+    public void testRead() throws FileNotFoundException, InterruptedException {
         storage.read();
         assertNotNull(storage.getLoadedTransactions(), "Can not read transactions");
     }
 
     @Test
-    public void testReadCatchCase(){
+    public void testReadCatch() throws InterruptedException {
         storage.deleteFile();
+        await().atMost(2, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertFalse(storage.ifFileExist(),"File still exist"));
         assertThrows(FileNotFoundException.class, () -> storage.read(), "Exception didn`t throw");
-    }
-    @AfterEach
-    public void afterEach() {
-        storage.deleteFile();
     }
 }
