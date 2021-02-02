@@ -8,35 +8,53 @@ import java.util.Date;
 
 public class Transaction {
 
+    private int id;
     private String date;
-    private String category;
-    private int amount;
-    private LocalDateTime recordDate;
+    private int type;
+    private int category;
+    private int sum;
+    private String comment;
 
-    public Transaction(String category, int amount) {
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern(Constants.dateFormat);
-        this.recordDate = LocalDateTime.now();
-        this.date = dtf.format(LocalDateTime.now());
+
+    // from database
+    public Transaction(int id, String date, int type, int category, int sum, String comment) {
+        this.id = id;
+        this.date = date;
+        this.type = type;
         this.category = category;
-        this.amount = amount;
+        this.sum = sum;
+        this.comment = comment;
+
     }
 
-    public Transaction getCurrentTransaction() {
-        return this;
+    // from UI
+    public Transaction(int category, int sum, int type) {
+        this.category = category;
+        this.sum = sum;
+        this.type = type;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getCategory() {
+        return category;
+    }
+
+    public int getSum() {
+        return sum;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public String getDate() {
         return date;
-    }
-    public Date getRecordDate() throws ParseException {
-        return new SimpleDateFormat(Constants.dateFormat).parse(this.getDate());
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public int getAmount() {
-        return amount;
     }
 }

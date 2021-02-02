@@ -28,6 +28,10 @@ dependencies {
     implementation 'com.google.guava:guava:27.0.1-jre'
     implementation 'com.google.code.gson:gson:2.8.2'
 
+    compile('com.microsoft.sqlserver:mssql-jdbc')
+    api group:'com.microsoft.sqlserver', name:'mssql-jdbc', version:'9.1.1.jre8-preview'
+
+
     // Use JUnit test framework
     testImplementation(platform('org.junit:junit-bom:5.7.0'))
     testImplementation('org.junit.jupiter:junit-jupiter')

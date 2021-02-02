@@ -6,20 +6,17 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 
 public final class Storage {
-
+    private DataBaseConection dataBaseConection = DataBaseConection.getInstance();
     private static Storage instance;
-
     private List<Transaction> storage;
 
     private Storage() {
-        storage = new ArrayList<>();
-        createStorageFile();
     }
 
     public static Storage getInstance() {
@@ -29,72 +26,72 @@ public final class Storage {
         return instance;
     }
 
-    public List<Transaction> getLoadedTransactions() {
-        Collections.sort(storage, new SortByDate());
-        Collections.reverse(storage);
-        return storage;
-    }
+    public List<Transaction> getLoadedTransactions() throws SQLException {
 
-//    private ClassLoader classLoader = getClass().getClassLoader();
-//
-//    private File resource = new File(classLoader.getResource( "Storage.json").getFile());
-//
-//    private final InputStream inputStream  = Storage.class.getClassLoader().getResourceAsStream("Storage.json");
-//    String FILE_NAME = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+        List list = new LinkedList();
 
-    private static final String FILE_NAME = "Storage.json";
+        ResultSet result = dataBaseConection
+                .select("*")
+                .from("[Test_App].[dbo].[transactions]")
+                .orderBy("date", false)
+                .executeQuery();
 
-    public void addTransaction(Transaction transaction) {
-        storage.add(transaction);
-    }
+        while (result.next()) {
+            int id = result.getInt("id");
+            String data = result.getString("date");
+            int type = result.getInt("type");
+            int category = result.getInt("category");
+            int sum = result.getInt("sum");
+            String comment = result.getString("comment");
 
-    public void saveFile() throws IOException {
-        try (Writer writer = new FileWriter(FILE_NAME)) {
-            Gson gson = new GsonBuilder().create();
-            gson.toJson(storage, writer);
+            Transaction transaction = new Transaction (id, data, type, category, sum, comment);
+
+            list.add(transaction);
         }
+        return list;
     }
 
-    public void read() throws FileNotFoundException {
-        Gson gson = new Gson();
-        JsonReader reader = null;
-        try {
-            reader = new JsonReader(new FileReader(FILE_NAME));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
+
+    public void addTransaction(Transaction transaction) throws SQLException {
+
+        List<String> columns = Arrays.asList("date", "type", "category", "sum", "comment");
+
+        List<String> values = new ArrayList<>();
+
+        values.add("'2021-01-01'");
+        values.add(String.valueOf(transaction.getType()));
+        values.add(String.valueOf(transaction.getCategory()));
+        values.add(String.valueOf(transaction.getSum()));
+        values.add("'++++++'");
+
+        dataBaseConection.insert("[Test_App].[dbo].[transactions]", columns, values)
+                .executeUpdate();
+    }
+
+    public int getTotalTransactionSum() throws SQLException {
+        ResultSet result = DataBaseConection.getInstance()
+                .select("")
+                .sum("([sum])")
+                .as("sum")
+                .from("[Test_App].[dbo].[transactions]")
+                .executeQuery();
+        int sum = 0;
+        while (result.next()) {
+            sum  = result.getInt("sum");
         }
-        storage = gson.fromJson(reader, new TypeToken<List<Transaction>>() {
-        }.getType());
-        if (storage == null) {
-            storage = new ArrayList<>();
-        }
+        return sum;
     }
 
-    public int getTotal() {
-        return storage.stream()
-                .mapToInt(Transaction::getAmount)
-                .sum();
+    public void createTestTransactionTable() throws SQLException {
+        List<String> rows = Arrays.asList("id int", "date datetime", "type int", "category int", "sum int" , "comment varchar(255)");
+        dataBaseConection
+                .createTable("TRANSACTION_TEST", rows)
+                .execute();
     }
 
-    public void createStorageFile(){
-        File storageFile = new File(FILE_NAME);
-        try {
-            if (!storageFile.exists() && !storageFile.createNewFile()) {
-                //
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+    public void dropTestTransactionsTable() throws SQLException {
+        dataBaseConection.dropTable("[Test_App].[dbo].[TRANSACTION_TEST]")
+                .execute();
 
-    public void deleteFile() {
-        File storageFile = new File(FILE_NAME);
-        storageFile.delete();
-    }
-
-    public boolean ifFileExist() {
-        File storageFile = new File(FILE_NAME);
-        return storageFile.exists();
     }
 }
