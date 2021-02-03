@@ -1,22 +1,30 @@
 package Test_App;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
+import Test_App.notifications.NotificationHandler;
+import Test_App.notifications.NotificationManager;
 
-import java.io.*;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 
 public final class Storage {
+
+    public static final String GET_TRANSACTIONS_NOTIFICATION = "getLoadedTransactions(): success";
+    public static final String ADD_TRANSACTION_NOTIFICATION = "addTransaction(): success";
+    public static final String GET_SUM_NOTIFICATION = "getTotalTransactionSum(): success";
+    public static final String CREATE_TRANSACTIONS_TABLE_NOTIFICATION = "createTestTransactionTable(): success";
+    public static final String DROP_TRANSACTIONS_TABLE_NOTIFICATION = "dropTestTransactionsTable(): success";
+
     private DataBaseConection dataBaseConection = DataBaseConection.getInstance();
     private static Storage instance;
     private List<Transaction> storage;
 
     private Storage() {
+        NotificationHandler.register(new NotificationManager());
     }
 
     public static Storage getInstance() {
@@ -28,7 +36,7 @@ public final class Storage {
 
     public List<Transaction> getLoadedTransactions() throws SQLException {
 
-        List list = new LinkedList();
+        List<Transaction> list = new LinkedList<>();
 
         ResultSet result = dataBaseConection
                 .select("*")
@@ -44,10 +52,11 @@ public final class Storage {
             int sum = result.getInt("sum");
             String comment = result.getString("comment");
 
-            Transaction transaction = new Transaction (id, data, type, category, sum, comment);
+            Transaction transaction = new Transaction(id, data, type, category, sum, comment);
 
             list.add(transaction);
         }
+        NotificationHandler.sendNotification(GET_TRANSACTIONS_NOTIFICATION);
         return list;
     }
 
@@ -66,6 +75,7 @@ public final class Storage {
 
         dataBaseConection.insert("[Test_App].[dbo].[transactions]", columns, values)
                 .executeUpdate();
+        NotificationHandler.sendNotification(ADD_TRANSACTION_NOTIFICATION);
     }
 
     public int getTotalTransactionSum() throws SQLException {
@@ -77,8 +87,9 @@ public final class Storage {
                 .executeQuery();
         int sum = 0;
         while (result.next()) {
-            sum  = result.getInt("sum");
+            sum = result.getInt("sum");
         }
+        NotificationHandler.sendNotification(GET_SUM_NOTIFICATION);
         return sum;
     }
 
@@ -87,11 +98,12 @@ public final class Storage {
         dataBaseConection
                 .createTable("TRANSACTION_TEST", rows)
                 .execute();
+        NotificationHandler.sendNotification(CREATE_TRANSACTIONS_TABLE_NOTIFICATION);
     }
 
     public void dropTestTransactionsTable() throws SQLException {
         dataBaseConection.dropTable("[Test_App].[dbo].[TRANSACTION_TEST]")
                 .execute();
-
+        NotificationHandler.sendNotification(DROP_TRANSACTIONS_TABLE_NOTIFICATION);
     }
 }
