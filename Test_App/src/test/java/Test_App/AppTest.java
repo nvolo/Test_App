@@ -11,51 +11,126 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.AbstractList;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.await;
 
 public class AppTest {
 
     Storage storage;
+    DataBaseConection dataBaseConection;
 
     @BeforeEach
     public void beforeEach() {
         storage = Storage.getInstance();
-        storage.createStorageFile();
+//        storage.createStorageFile();
+        dataBaseConection = DataBaseConection.getInstance();
     }
 
     @AfterEach
     public void afterEach() {
-        storage.deleteFile();
+        //storage.deleteFile();
+    }
+
+//    @Test
+//    public void testGetInstance () {
+//        assertNotNull(storage, "Storage can`t be NULL!");
+//    }
+//
+//    @Test
+//    public void testAddTransaction() {
+//        Transaction transaction = new Transaction("Salary", 200);
+//        storage.addTransaction(transaction);
+//        assertTrue(storage.getLoadedTransactions().contains(transaction), "Wrong transaction!");
+//    }
+//
+//    @Test
+//    public void testSaveFile() throws IOException {
+//        assertDoesNotThrow(() -> storage.saveFile(), "Can not save file!");
+//    }
+//
+//    @Test
+//    public void testRead() throws FileNotFoundException, InterruptedException {
+//        storage.read();
+//        assertNotNull(storage.getLoadedTransactions(), "Can not read transactions");
+//    }
+//
+//    @Test
+//    public void testReadCatch() throws InterruptedException {
+//        storage.deleteFile();
+//        await().atMost(2, TimeUnit.SECONDS)
+//                .untilAsserted(() -> assertFalse(storage.ifFileExist(),"File still exist"));
+//        assertThrows(FileNotFoundException.class, () -> storage.read(), "Exception didn`t throw");
+//    }
+
+    @Test
+    public void testSelect() throws SQLException {
+        String result = dataBaseConection
+                .select("*")
+                .getQuery();
+
+        String expecedResult = "SELECT *";
+        assertTrue(result.equals(expecedResult), "Actual string is wrong. Expected \"" + expecedResult + "\", but actual recult is \"" + result + "\"");
     }
 
     @Test
-    public void testGetInstance () {
-        assertNotNull(storage, "Storage can`t be NULL!");
+    public void testFrom() throws SQLException {
+        String result = dataBaseConection
+                .from("[Test_App].[dbo].[transaction_categories]")
+                .getQuery();
+
+        String expecedResult = " FROM [Test_App].[dbo].[transaction_categories]";
+        assertTrue(result.equals(expecedResult), "Actual string is wrong. Expected \"" + expecedResult + "\", but actual recult is \"" + result + "\"");
     }
 
     @Test
-    public void testAddTransaction() {
-        Transaction transaction = new Transaction("Salary", 200);
-        storage.addTransaction(transaction);
-        assertTrue(storage.getLoadedTransactions().contains(transaction), "Wrong transaction!");
+    public void testWhere() throws SQLException {
+        String result = dataBaseConection
+                .where("[type] = 1")
+                .getQuery();
+
+        String expecedResult = " WHERE [type] = 1";
+        assertTrue(result.equals(expecedResult), "Actual string is wrong. Expected \"" + expecedResult + "\", but actual recult is \"" + result + "\"");
     }
 
     @Test
-    public void testSaveFile() throws IOException {
-        assertDoesNotThrow(() -> storage.saveFile(), "Can not save file!");
+    public void testOrderBy() throws SQLException {
+        String result = dataBaseConection
+                .orderBy("[type]", true)
+                .getQuery();
+
+        String expecedResult = " ORDER BY [type] ASC";
+        assertTrue(result.equals(expecedResult), "Actual string is wrong. Expected \"" + expecedResult + "\", but actual recult is \"" + result + "\"");
     }
 
     @Test
-    public void testRead() throws FileNotFoundException, InterruptedException {
-        storage.read();
-        assertNotNull(storage.getLoadedTransactions(), "Can not read transactions");
+    public void testInsert() throws SQLException {
+        List<String> columns = Arrays.asList("date", "type", "category", "sum", "comment");
+        List<String> values = Arrays.asList("6", "salary", "2");
+
+        String result = dataBaseConection
+                .insert("[Test_App].[dbo].[transaction_categories]", columns, values)
+                .getQuery();
+
+        String expecedResult = " INSERT INTO [Test_App].[dbo].[transaction_categories] ( date , type , category , sum , comment )  VALUES  ( 6 , salary , 2 ) ";
+        assertTrue(result.equals(expecedResult), "Actual string is wrong. Expected \"" + expecedResult + "\", but actual recult is \"" + result + "\"");
     }
 
-    @Test
-    public void testReadCatch() throws InterruptedException {
-        storage.deleteFile();
-        await().atMost(2, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertFalse(storage.ifFileExist(),"File still exist"));
-        assertThrows(FileNotFoundException.class, () -> storage.read(), "Exception didn`t throw");
-    }
+
+//    @Test
+//    public void testaddTransaction() throws SQLException {
+//
+//        Transaction transaction = new Transaction(1, 200, 1);
+//
+//        storage.addTransaction(transaction);
+//
+//        assert true;
+//    }
+
 }
